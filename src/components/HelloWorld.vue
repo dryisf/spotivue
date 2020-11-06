@@ -3,10 +3,10 @@
     <v-row class="text-center">
       <v-col cols="12">
         <v-img
-          :src="require('../assets/logo.svg')"
-          class="my-3"
+          :src="require('../assets/img/cyborg.jpg')"
+          class="my-5"
           contain
-          height="200"
+          height="300"
         />
       </v-col>
     </v-row>
@@ -14,7 +14,7 @@
     <h1>Hello la promo Ynov !</h1>
     <h3>Bienvenue sur Ynov Songs :)</h3>
 
-    <button @click="loaded = true">Chargement des Todos</button>
+    <button @click="loaded = !loaded">Chargement des Todos</button>
     <Todos v-if="loaded"></Todos>
 
     <p>Nb de count: {{ count }}</p>
@@ -64,7 +64,7 @@ export default {
   props: {
     msg: String,
   },
-  data: function () {
+  data: function() {
     return {
       loaded: false,
       count: 0,
@@ -105,10 +105,12 @@ export default {
       return this.nbLike > 30;
     },
     filterPrenoms() {
-      if (this.search.length < 3) {
+      if (this.search.length < 2) {
         return this.prenoms;
       } else {
-        return this.prenoms.filter((elt) => elt.includes(this.search));
+        return this.prenoms.filter((elt) =>
+          elt.toLowerCase().includes(this.search.toLowerCase())
+        );
       }
     },
   },

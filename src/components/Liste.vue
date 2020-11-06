@@ -6,11 +6,13 @@
       </slot>
     </header>
 
-    <ul>
-      <li v-for="(prenom, index) in filterPrenoms" :key="index">
-        <Item @increase="increase" :title="prenom" />
-      </li>
-    </ul>
+    <v-card class="mx-auto" max-width="400" tile>
+      <v-list>
+        <v-list-item v-for="(prenom, index) in filterPrenoms" :key="index">
+          <Item @increase="increase" :title="prenom" />
+        </v-list-item>
+      </v-list>
+    </v-card>
     <p>Nb de click: {{ nbClick }}</p>
   </div>
 </template>
@@ -22,7 +24,7 @@ export default {
   props: {
     filterPrenoms: Array,
   },
-  data: function () {
+  data: function() {
     return {
       nbClick: 0,
     };
