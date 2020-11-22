@@ -6,13 +6,22 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: () => import("../views/Home.vue"),
+    redirect: "/home",
   },
   {
-    path: "/spotivue",
-    name: "Spotivue",
+    path: "/home",
+    name: "Home",
     component: () => import("../views/Spotivue.vue"),
+  },
+  {
+    path: "/artists",
+    name: "Artists",
+    component: () => import("../views/Artists.vue"),
+  },
+  {
+    path: "/artists/:artistId",
+    name: "ArtistDetails",
+    component: () => import("../views/ArtistDetails.vue"),
   },
 ];
 

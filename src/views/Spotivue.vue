@@ -1,10 +1,12 @@
 <template>
-  <v-row justify="center" class="spotivue" no-gutters>
+  <v-row justify="center" class="spotivue flex-wrap-reverse">
     <Player
       @selectedSongId="selectedSongId = $event"
       :selectedSongId="selectedSongId"
+      :queuedSongId="queuedSongId"
     />
     <Playlist
+      @queuedSongId="queuedSongId = $event"
       @selectedSongId="selectedSongId = $event"
       :selectedSongId="selectedSongId"
     />
@@ -23,6 +25,7 @@ export default {
   },
   data: () => ({
     selectedSongId: 0,
+    queuedSongId: null,
   }),
 };
 </script>

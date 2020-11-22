@@ -1,72 +1,91 @@
 <template>
-  <div class="d-flex justify-center mr-5 mb-5">
-    <v-card dark width="400" v-show="selectedSong">
-      <v-img
-        class="ma-5"
-        height="350"
-        contain
-        :src="selectedSong.coverUrl"
-      ></v-img>
-      <div class="px-5">
-        <div class="text-left">
-          <h2>{{ selectedSong.title }}</h2>
-          <p>{{ selectedSong.artist }}</p>
-        </div>
-        <audio id="audio" @timeupdate="setProgress"></audio>
-        <div class="d-flex flex-column">
-          <v-slider
-            width="500"
-            v-model="progress"
-            @change="setCurrentTime"
-          ></v-slider>
-          <div class="d-flex justify-space-between">
-            <span>{{ currentTime }}</span
-            ><span>{{ duration }}</span>
-          </div>
-        </div>
-        <div class=" d-flex align-center justify-center my-5">
-          <v-btn light small @click="onShuffle = !onShuffle" class="mr-7"
-            ><v-icon :color="onShuffle ? 'blue' : ''"
-              >mdi-shuffle</v-icon
-            ></v-btn
+  <v-card dark width="400" class="mx-5">
+    <v-img
+      class="ma-5"
+      height="350"
+      contain
+      :src="selectedSong.coverUrl"
+    ></v-img>
+    <div class="px-5">
+      <div class="text-left">
+        <h2>
+          <span
+            @click="
+              goToArtistDetails(selectedSong.artist && selectedSong.artist.id)
+            "
+            >{{ selectedSong.title }}</span
           >
-          <v-btn light small @click="previous"
-            ><v-icon>mdi-skip-previous-circle-outline</v-icon></v-btn
+          <span
+            class="float-right"
+            @click="selectedSong.isLiked = !selectedSong.isLiked"
+            style="cursor: pointer"
+            ><v-icon>{{
+              `mdi-${selectedSong.isLiked ? "heart" : "heart-outline"}`
+            }}</v-icon></span
           >
-          <v-btn light @click="togglePlay" class="mx-5"
-            ><v-icon>{{ actionIcon }}</v-icon></v-btn
-          >
-          <v-btn light small @click="next"
-            ><v-icon>mdi-skip-next-circle-outline</v-icon></v-btn
-          >
-          <v-btn light small @click="onRepeatOnce = !onRepeatOnce" class="ml-7"
-            ><v-icon :color="onRepeatOnce ? 'blue' : ''"
-              >mdi-repeat-once</v-icon
-            ></v-btn
-          >
-        </div>
-        <div class="d-flex my-5 volume">
-          <v-icon color="white">mdi-volume-low</v-icon>
-          <v-slider
-            class="mt-5"
-            width="500"
-            v-model="volume"
-            @change="setVolume"
-          ></v-slider>
-          <v-icon color="white">mdi-volume-high</v-icon>
+        </h2>
+        <p
+          @click="
+            goToArtistDetails(selectedSong.artist && selectedSong.artist.id)
+          "
+        >
+          {{ selectedSong.artist && selectedSong.artist.name }}
+        </p>
+      </div>
+      <audio id="audio" @timeupdate="setProgress"></audio>
+      <div class="d-flex flex-column">
+        <v-slider
+          width="500"
+          v-model="progress"
+          @change="setCurrentTime"
+        ></v-slider>
+        <div class="d-flex justify-space-between">
+          <span>{{ currentTime }}</span
+          ><span>{{ duration }}</span>
         </div>
       </div>
-    </v-card>
-  </div>
+      <div class=" d-flex align-center justify-center my-5">
+        <v-btn light small @click="onShuffle = !onShuffle" class="mr-7"
+          ><v-icon :color="onShuffle ? 'blue' : ''">mdi-shuffle</v-icon></v-btn
+        >
+        <v-btn light small @click="previous"
+          ><v-icon>mdi-skip-previous-circle-outline</v-icon></v-btn
+        >
+        <v-btn light @click="togglePlay" class="mx-5"
+          ><v-icon>{{ actionIcon }}</v-icon></v-btn
+        >
+        <v-btn light small @click="next"
+          ><v-icon>mdi-skip-next-circle-outline</v-icon></v-btn
+        >
+        <v-btn light small @click="onRepeatOnce = !onRepeatOnce" class="ml-7"
+          ><v-icon :color="onRepeatOnce ? 'blue' : ''"
+            >mdi-repeat-once</v-icon
+          ></v-btn
+        >
+      </div>
+      <div class="d-flex my-5 volume">
+        <v-icon color="white">mdi-volume-low</v-icon>
+        <v-slider
+          class="mt-5"
+          width="500"
+          v-model="volume"
+          @change="setVolume"
+        ></v-slider>
+        <v-icon color="white">mdi-volume-high</v-icon>
+      </div>
+    </div>
+  </v-card>
 </template>
 
 <script>
-import playlist from "../assets/js/playlist";
+import { playlist } from "../assets/js/playlist";
 export default {
   props: {
     selectedSongId: Number,
+    queuedSongId: Number,
   },
   data: () => ({
+    queue: [],
     progress: 0,
     selectedSong: {},
     actionIcon: "",
@@ -79,6 +98,9 @@ export default {
     playlist,
   }),
   methods: {
+    goToArtistDetails(artistId) {
+      this.$router.push({ name: "ArtistDetails", params: { artistId } });
+    },
     setCurrentTime() {
       this.audio.currentTime = (this.progress / 100) * this.audio.duration;
     },
@@ -92,7 +114,10 @@ export default {
     next() {
       let nextSong;
 
-      if (this.onShuffle) {
+      if (this.queue.length !== 0) {
+        nextSong = this.queue[0];
+        this.queue.shift();
+      } else if (this.onShuffle) {
         const randomId = this.generateRandomId();
         nextSong = this.playlist.find((song) => song.id === randomId);
       } else
@@ -185,6 +210,14 @@ export default {
         (song) => song.id === this.selectedSongId
       );
       this.putSong();
+    },
+    queuedSongId() {
+      const queuedSong = this.playlist.find(
+        (song) => song.id === this.queuedSongId
+      );
+      this.queue.push(queuedSong);
+      console.log("added to queue :", queuedSong.title);
+      console.log("queue : ", this.queue);
     },
   },
   mounted() {
