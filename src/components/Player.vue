@@ -63,15 +63,13 @@
           ></v-btn
         >
       </div>
-      <div class="d-flex my-5 volume">
-        <v-icon color="white">mdi-volume-low</v-icon>
-        <v-slider
-          class="mt-5"
-          width="500"
+      <div class="d-flex my-5 justify-center align-center volume">
+        <knob-control
           v-model="volume"
-          @change="setVolume"
-        ></v-slider>
-        <v-icon color="white">mdi-volume-high</v-icon>
+          text-color="#fff"
+          primary-color="gray"
+          secondary-color="#fff"
+        ></knob-control>
       </div>
     </div>
   </v-card>
@@ -103,9 +101,6 @@ export default {
     },
     setCurrentTime() {
       this.audio.currentTime = (this.progress / 100) * this.audio.duration;
-    },
-    setVolume() {
-      this.audio.volume = this.volume / 100;
     },
     togglePlay() {
       this.audio.paused ? this.audio.play() : this.audio.pause();
@@ -202,6 +197,9 @@ export default {
     },
   },
   watch: {
+    volume() {
+      this.audio.volume = this.volume / 100;
+    },
     selectedSong() {
       this.$emit("selectedSongId", this.selectedSong.id);
     },

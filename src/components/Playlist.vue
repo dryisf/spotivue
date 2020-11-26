@@ -41,9 +41,6 @@
                         }}</span>
                       </span>
                     </div>
-                    <v-btn color="white"
-                      ><v-icon>mdi-playlist-plus</v-icon></v-btn
-                    >
                   </v-list-item-group>
                 </v-list>
               </v-card>

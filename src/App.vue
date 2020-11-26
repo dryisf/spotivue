@@ -3,8 +3,8 @@
     <v-app>
       <v-main>
         <div id="nav">
-          <router-link to="/">Home</router-link> |
-          <router-link to="/spotivue">Spotivue</router-link>
+          <router-link to="/home">Player</router-link> |
+          <router-link to="/artists">Artists</router-link>
         </div>
         <router-view />
       </v-main>
@@ -38,7 +38,7 @@ export default {};
       color: #7f8fa6;
     }
 
-    &.router-link-exact-active {
+    &.router-link-active {
       color: #2196f3;
     }
   }
