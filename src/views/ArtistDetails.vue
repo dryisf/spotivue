@@ -22,9 +22,8 @@ export default {
   methods: {
     getSelectedArtist() {
       let { artistId } = this.$route.params;
-      console.log(this.artists.find((artist) => artist.id === artistId));
       this.selectedArtist = this.artists.find(
-        (artist) => artist.id === artistId
+        (artist) => artist.id == artistId
       );
     },
   },

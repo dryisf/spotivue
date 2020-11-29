@@ -43,7 +43,6 @@ export const playlist = [
     title: "Au cœur du G",
     source: require("../mp3/au-coeur-du-g.mp3"),
     coverUrl: require("../img/feu.jpg"),
-    isLiked: false,
   },
   {
     id: 1,
@@ -51,7 +50,6 @@ export const playlist = [
     title: "Humanoïde",
     source: require("../mp3/humanoide.mp3"),
     coverUrl: require("../img/cyborg.jpg"),
-    isLiked: false,
   },
   {
     id: 2,
@@ -59,7 +57,6 @@ export const playlist = [
     title: "Damage",
     source: require("../mp3/damage.mp3"),
     coverUrl: require("../img/damage.jpg"),
-    isLiked: false,
   },
   {
     id: 3,
@@ -67,7 +64,6 @@ export const playlist = [
     title: "UNE MAIN LAVE L'AUTRE",
     source: require("../mp3/umla.mp3"),
     coverUrl: require("../img/umla.jpg"),
-    isLiked: false,
   },
   {
     id: 4,
@@ -75,7 +71,6 @@ export const playlist = [
     title: "Drill FR 5 (ft. Hamza)",
     source: require("../mp3/drill-fr-5.mp3"),
     coverUrl: require("../img/drill-fr-5.jpg"),
-    isLiked: false,
   },
   {
     id: 5,
@@ -83,6 +78,5 @@ export const playlist = [
     title: "LE SON INTERDIT",
     source: require("../mp3/le-son-interdit.mp3"),
     coverUrl: require("../img/le-son-interdit.jpg"),
-    isLiked: false,
   },
 ];

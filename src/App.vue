@@ -7,6 +7,7 @@
           <router-link to="/artists">Artists</router-link>
         </div>
         <router-view />
+        <audio id="audio"></audio>
       </v-main>
     </v-app>
   </div>

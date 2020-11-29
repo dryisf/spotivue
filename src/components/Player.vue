@@ -10,29 +10,22 @@
       <div class="text-left">
         <h2>
           <span
-            @click="
-              goToArtistDetails(selectedSong.artist && selectedSong.artist.id)
-            "
+            @click="goToArtistDetails(selectedSong.artist.id)"
+            class="clickable"
             >{{ selectedSong.title }}</span
           >
           <span
-            class="float-right"
-            @click="selectedSong.isLiked = !selectedSong.isLiked"
-            style="cursor: pointer"
+            class="float-right clickable"
+            @click="toggleLike(selectedSong.id)"
             ><v-icon>{{
-              `mdi-${selectedSong.isLiked ? "heart" : "heart-outline"}`
+              `mdi-${isLiked ? "heart" : "heart-outline"}`
             }}</v-icon></span
           >
         </h2>
-        <p
-          @click="
-            goToArtistDetails(selectedSong.artist && selectedSong.artist.id)
-          "
-        >
-          {{ selectedSong.artist && selectedSong.artist.name }}
+        <p @click="goToArtistDetails(selectedSong.artist.id)">
+          <span class="clickable">{{ selectedSong.artist.name }}</span>
         </p>
       </div>
-      <audio id="audio" @timeupdate="setProgress"></audio>
       <div class="d-flex flex-column">
         <v-slider
           width="500"
@@ -78,24 +71,25 @@
 <script>
 import { playlist } from "../assets/js/playlist";
 export default {
-  props: {
-    selectedSongId: Number,
-    queuedSongId: Number,
-  },
   data: () => ({
-    queue: [],
-    progress: 0,
-    selectedSong: {},
-    actionIcon: "",
+    playlist,
+    progress: null,
+    actionIcon: null,
     audio: null,
     onRepeatOnce: false,
     onShuffle: false,
-    currentTime: "",
-    duration: "",
-    volume: 100,
-    playlist,
+    currentTime: null,
+    duration: null,
+    volume: 0,
   }),
   methods: {
+    toggleLike(songId) {
+      if (!this.isLiked) this.$store.commit("likeSong", songId);
+      else this.$store.commit("unlikeSong", songId);
+    },
+    changeSong(songId) {
+      this.$store.commit("changeSelectedSongId", songId);
+    },
     goToArtistDetails(artistId) {
       this.$router.push({ name: "ArtistDetails", params: { artistId } });
     },
@@ -107,35 +101,18 @@ export default {
       this.setIcon();
     },
     next() {
-      let nextSong;
-
       if (this.queue.length !== 0) {
-        nextSong = this.queue[0];
-        this.queue.shift();
+        this.changeSong(this.queue.shift());
       } else if (this.onShuffle) {
-        const randomId = this.generateRandomId();
-        nextSong = this.playlist.find((song) => song.id === randomId);
-      } else
-        nextSong = this.playlist.find(
-          (song) => song.id === this.selectedSong.id + 1
-        );
-
-      if (nextSong) {
-        this.selectedSong = nextSong;
-        this.putSong();
-      }
+        const randomSongId = this.generateRandomId();
+        this.changeSong(randomSongId);
+      } else if (this.selectedSong.id + 1 < this.playlist.length)
+        this.changeSong(this.selectedSong.id + 1);
     },
     previous() {
-      const previousSong = this.playlist.find(
-        (song) => song.id === this.selectedSong.id - 1
-      );
-
       if (this.audio.currentTime > 10 || this.selectedSong.id === 0)
         this.repeatSong();
-      else if (previousSong) {
-        this.selectedSong = previousSong;
-        this.putSong();
-      }
+      else this.changeSong(this.selectedSong.id - 1);
     },
     repeatSong() {
       this.audio.currentTime = 0;
@@ -153,8 +130,12 @@ export default {
     },
     init() {
       this.audio = document.getElementById("audio");
-      this.selectedSong = this.playlist[0];
+      this.volume = 10;
       this.putSong();
+
+      this.audio.addEventListener("timeupdate", () => {
+        this.setProgress();
+      });
 
       this.audio.addEventListener("ended", () => {
         this.setIcon();
@@ -180,7 +161,7 @@ export default {
       );
 
       if (index !== this.selectedSong.id) return index;
-      else return this.generateRandomId();
+      return this.generateRandomId();
     },
     formatTime(time) {
       let minutes = parseInt(time / 60, 10);
@@ -201,21 +182,20 @@ export default {
       this.audio.volume = this.volume / 100;
     },
     selectedSong() {
-      this.$emit("selectedSongId", this.selectedSong.id);
-    },
-    selectedSongId() {
-      this.selectedSong = this.playlist.find(
-        (song) => song.id === this.selectedSongId
-      );
       this.putSong();
     },
-    queuedSongId() {
-      const queuedSong = this.playlist.find(
-        (song) => song.id === this.queuedSongId
+  },
+  computed: {
+    selectedSong() {
+      return this.playlist.find(
+        (song) => song.id === this.$store.getters.getSelectedSongId
       );
-      this.queue.push(queuedSong);
-      console.log("added to queue :", queuedSong.title);
-      console.log("queue : ", this.queue);
+    },
+    queue() {
+      return this.$store.getters.getQueue;
+    },
+    isLiked() {
+      return this.$store.getters.getLikedSongsId.includes(this.selectedSong.id);
     },
   },
   mounted() {
@@ -231,5 +211,9 @@ export default {
       color: #2196f3 !important;
     }
   }
+}
+
+.clickable {
+  cursor: pointer;
 }
 </style>

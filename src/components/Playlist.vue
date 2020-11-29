@@ -90,9 +90,6 @@
 <script>
 import { playlist } from "../assets/js/playlist";
 export default {
-  props: {
-    selectedSongId: Number,
-  },
   data: () => ({
     playlist,
     isExpanded: false,
@@ -101,22 +98,27 @@ export default {
   }),
   methods: {
     changeSong(songId) {
-      this.$emit("selectedSongId", songId);
+      this.$store.commit("changeSelectedSongId", songId);
     },
     addToQueue(songId) {
-      this.$emit("queuedSongId", songId);
+      this.$store.commit("addSongToQueue", songId);
     },
   },
   computed: {
+    likedSongs() {
+      return this.$store.getters.getLikedSongsId.map((likedSongId) =>
+        this.playlist.find((song) => song.id === likedSongId)
+      );
+    },
+    selectedSongId() {
+      return this.$store.getters.getSelectedSongId;
+    },
     filteredSongs() {
       return this.playlist.filter(
         (song) =>
           song.title.toLowerCase().includes(this.search.toLowerCase()) ||
           song.artist.name.toLowerCase().includes(this.search.toLowerCase())
       );
-    },
-    likedSongs() {
-      return this.playlist.filter((song) => song.isLiked);
     },
   },
 };
