@@ -6,7 +6,9 @@
           <router-link to="/home">Player</router-link> |
           <router-link to="/artists">Artists</router-link>
         </div>
-        <router-view />
+        <keep-alive>
+          <router-view :key="$route.fullPath" />
+        </keep-alive>
         <audio id="audio"></audio>
       </v-main>
     </v-app>

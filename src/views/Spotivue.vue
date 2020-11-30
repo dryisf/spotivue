@@ -1,8 +1,6 @@
 <template>
   <v-row justify="center" class="spotivue flex-wrap-reverse">
-    <!-- <keep-alive> -->
     <Player />
-    <!-- </keep-alive> -->
     <Playlist />
   </v-row>
 </template>
